@@ -1,0 +1,14 @@
+{
+  "name": "es6-ftp",
+  "version": "0.0.1",
+  "description": "FTP client module with ES6 features support",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dino Ivankov <dinoivankov@gmail.com> (https://github.com/jazziebgd)",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.5"
+  }
+}
