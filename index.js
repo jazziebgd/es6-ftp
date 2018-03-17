@@ -4,7 +4,6 @@ delete require.cache[require.resolve('./lib/ftpClientData')];
 delete require.cache[require.resolve('./lib/ftpResponseParser')];
 delete require.cache[require.resolve('./lib/ftpFileItem')];
 delete require.cache[require.resolve('./lib/ftpLimiter')];
-delete require.cache[require.resolve('./lib/ftpLogger')];
 delete require.cache[require.resolve('./lib/ftpBase')];
 
 module.exports = {
@@ -13,7 +12,6 @@ module.exports = {
     FtpResponseParser: require('./lib/ftpResponseParser'),
     FtpFileItem: require('./lib/ftpFileItem'),
     FtpLimiter: require('./lib/ftpLimiter'),
-    FtpLogger: require('./lib/ftpLogger'),
     FtpBase: require('./lib/ftpBase'),
     ftpClientData: require('./lib/ftpClientData'),
 };
