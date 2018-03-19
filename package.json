@@ -1,14 +1,18 @@
 {
-  "name": "es6-ftp",
-  "version": "0.0.1",
-  "description": "FTP client module with ES6 features support",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Dino Ivankov <dinoivankov@gmail.com> (https://github.com/jazziebgd)",
-  "license": "MIT",
-  "dependencies": {
-    "lodash": "^4.17.5"
-  }
+    "name": "es6-ftp",
+    "version": "0.0.1",
+    "description": "FTP client module with ES6 features support",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha --ui bdd --exit --timeout 60000 test"
+    },
+    "author": "Dino Ivankov <dinoivankov@gmail.com> (https://github.com/jazziebgd)",
+    "license": "MIT",
+    "dependencies": {
+        "lodash": "^4.17.5"
+    },
+    "devDependencies": {
+        "chai": "^4.1.2",
+        "mocha": "^5.0.4"
+    }
 }

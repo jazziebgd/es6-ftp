@@ -15,6 +15,9 @@ module.exports = {
         'allowImportExportEverywhere': false,
         'codeFrame': false
     },
+    'plugins': [
+        'mocha'
+    ],
     'rules': {
         'indent': [
             'error',

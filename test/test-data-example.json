@@ -1,0 +1,12 @@
+{
+    "connection": {
+        "host": "localhost",
+        "port": 21,
+        "user": "user",
+        "password": "pass"
+    },
+    "options": {},
+    "testDir": "es6-ftp-test",
+    "newTestDir": "es6-ftp-test-2",
+    "newFileName": "test-data-2.json"
+}
