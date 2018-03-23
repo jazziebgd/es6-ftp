@@ -9,6 +9,7 @@ let expect = require('chai').expect;
 let assert = require('chai').assert;
 let testDataFileName = 'test-data.json';
 let testDataFile = path.join(__dirname, testDataFileName);
+let testDataFileContents;
 
 let testDataRequiredKeys = [
     'options',
@@ -37,6 +38,15 @@ let testError = function(messages = []) {
 
 if (!fs.existsSync(testDataFile)) {
     testError(['Test file "' + testDataFileName + '" is not present!', 'Please create it using provided "' + testDataFileName.replace(/\.json/, '-example.json') + '" example file.']);
+}
+
+try {
+    testDataFileContents = fs.readFileSync(testDataFile);
+    if (!testDataFileContents) {
+        testError(['Test file "' + testDataFileName + '" appears to be empty!']);
+    }
+} catch (ex) {
+    testError(['Test file "' + testDataFileName + '" contents could not be read!']);
 }
 
 let testData = require(testDataFile);
@@ -106,7 +116,7 @@ describe('FtpClient', function () {
         });
     });
     describe('get', function () {
-        it('Gets file contents from root directory', async function () {
+        it('Gets contents of first readable file from root directory', async function () {
             let fileContents = '';
             let fileItem = _.find(files, (item) => {
                 return item.type == '-' && item.size > 0 && item.fullPath && item.rights && item.rights.user && item.rights.user.match(/^r/);
@@ -194,6 +204,19 @@ describe('FtpClient', function () {
             }
             expect(uploaded).to.equal(true);
             expect(fileSize).to.equal(testDataFileSize);
+        });
+    });
+    describe('get/compare', function () {
+        it('Gets previously uploaded file contents from root directory and compares them to original file', async function () {
+            let fileContents = '';
+            try {
+                let ftpRequest = await fc.get(sourcePath);
+                fileContents = ftpRequest.text;
+            } catch (err) {
+                fileContents = '';
+            }
+            assert(fileContents.length > 0, 'File contents received');
+            assert(fileContents == testDataFileContents, 'File contents identical');
         });
     });
     describe('append/size', function () {
