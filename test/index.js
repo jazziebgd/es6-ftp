@@ -65,6 +65,10 @@ let newTestDir = path.join('/', testData.newTestDir);
 let sourcePath = path.join(testDir, path.basename(testDataFile));
 let destinationPath = path.join(testDir, testData.newFileName);
 let testDataFileSize = fs.statSync(testDataFile).size;
+let getFileNoLimitDuration = 0;
+let getFileLimitDuration = 0;
+let putFileNoLimitDuration = 0;
+let putFileLimitDuration = 0;
 
 let originalFileCount = 0;
 
@@ -117,6 +121,7 @@ describe('FtpClient', function () {
     });
     describe('get', function () {
         it('Gets contents of first readable file from root directory', async function () {
+            let startTime = Date.now();
             let fileContents = '';
             let fileItem = _.find(files, (item) => {
                 return item.type == '-' && item.size > 0 && item.fullPath && item.rights && item.rights.user && item.rights.user.match(/^r/);
@@ -129,7 +134,34 @@ describe('FtpClient', function () {
                     fileContents = '';
                 }
             }
+            let endTime = Date.now();
+            getFileNoLimitDuration = endTime - startTime;
             assert(fileContents.length > 0, 'File contents received');
+        });
+    });
+    describe('getLimited', function () {
+        it('Gets contents of first readable file from root directory with speed limits applied', async function () {
+            let startTime = Date.now();
+            fc.options.limitDownload = 10 * 1024;
+            fc.options.limitUpload = 10 * 1024;
+            fc.setLimiting(true);
+            let fileContents = '';
+            let fileItem = _.find(files, (item) => {
+                return item.type == '-' && item.size > 0 && item.fullPath && item.rights && item.rights.user && item.rights.user.match(/^r/);
+            });
+            if (fileItem) {
+                try {
+                    let ftpRequest = await fc.get(fileItem.fullPath);
+                    fileContents = ftpRequest.text;
+                } catch (err) {
+                    fileContents = '';
+                }
+            }
+            fc.setLimiting(false);
+            let endTime = Date.now();
+            getFileLimitDuration = endTime - startTime;
+            assert(fileContents.length > 0, 'File contents received');
+            assert(getFileLimitDuration > getFileNoLimitDuration, 'Limited transfer took longer than unlimited one');
         });
     });
     describe('mkdir', function () {
@@ -187,6 +219,7 @@ describe('FtpClient', function () {
     });
     describe('put/size', function () {
         it('Uploads file and checks it size on server', async function () {
+            let startTime = Date.now();
             let uploaded = false;
             let fileSize = 0;
             try {
@@ -202,8 +235,39 @@ describe('FtpClient', function () {
             } catch (ex) {
                 uploaded = false;
             }
+            let endTime = Date.now();
+            putFileNoLimitDuration = endTime - startTime;
             expect(uploaded).to.equal(true);
             expect(fileSize).to.equal(testDataFileSize);
+        });
+    });
+    describe('put/sizeLimited', function () {
+        it('Uploads file with limits and checks it size on server', async function () {
+            let startTime = Date.now();
+            fc.options.limitDownload = 1024;
+            fc.options.limitUpload = 1024;
+            fc.setLimiting(true);
+            let uploaded = false;
+            let fileSize = 0;
+            try {
+                uploaded = await fc.put(testDataFile, sourcePath);
+                await fc.wait(1000);
+                if (uploaded) {
+                    try {
+                        fileSize = await fc.size(sourcePath);
+                    } catch (ex) {
+                        fileSize = 0;
+                    }
+                }
+            } catch (ex) {
+                uploaded = false;
+            }
+            let endTime = Date.now();
+            putFileLimitDuration = endTime - startTime;
+            fc.setLimiting(false);
+            expect(uploaded).to.equal(true);
+            expect(fileSize).to.equal(testDataFileSize);
+            assert(putFileLimitDuration > putFileNoLimitDuration, 'Limited transfer took longer than unlimited one');
         });
     });
     describe('get/compare', function () {

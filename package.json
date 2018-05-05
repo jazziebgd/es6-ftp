@@ -4,7 +4,7 @@
     "description": "FTP client module with ES6 features support",
     "main": "index.js",
     "scripts": {
-        "test": "mocha --ui bdd --exit --timeout 60000 test",
+        "test": "mocha --ui bdd --exit --timeout 60000 --slow 3000 test",
         "doc": "rm -rf doc && jsdoc --pedantic -c jsDocConfig.js"
     },
     "author": "Dino Ivankov <dinoivankov@gmail.com> (https://github.com/jazziebgd)",
